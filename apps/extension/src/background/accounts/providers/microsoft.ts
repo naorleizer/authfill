@@ -1,5 +1,5 @@
 import { getMicrosoftAccessToken } from "@extension/background/auth/microsoft";
-import { syncAccounts } from "@extension/background/accounts";
+import { deleteAccount, syncAccounts } from "@extension/background/accounts";
 import { addEmails } from "@extension/background/utils/email";
 import type { EmailBase } from "@extension/types/email";
 import type { MicrosoftAccountConfig } from "@extension/utils/storage";
@@ -47,7 +47,9 @@ export class MicrosoftAccount {
     try {
       accessToken = await getMicrosoftAccessToken(this.config);
     } catch (err) {
-      console.error(`[${this.config.id}] Token refresh failed:`, err);
+      console.error(`[${this.config.id}] Token refresh failed, removing account:`, err);
+      this.disconnect();
+      await deleteAccount({ accountId: this.config.id });
       return;
     }
 
