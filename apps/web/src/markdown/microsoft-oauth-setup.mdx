@@ -10,33 +10,19 @@ This guide walks you through the entire setup process.
 
 ### 1. Create an Azure AD App Registration
 
-1. Go to the [Azure Portal - App Registrations](https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade)
-2. Sign in with your Microsoft account
-3. Click **New registration**
-4. Fill in the details:
+1. Create a free azure account, if you haven't already [here](https://signup.azure.com/signup?offer=ms-azr-0044p&appId=102&l=en-us&icid=azurefreeaccount)
+2. Go to the [Azure Portal - App Registrations](https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade)
+3. Sign in with your Microsoft account
+4. Click **New registration**
+5. Fill in the details:
    - **Name:** `AuthFill` (or any name you prefer)
-   - **Supported account types:** Select **Accounts in any organizational directory and personal Microsoft accounts**
-   - **Redirect URI:** Leave blank for now (we'll add it next)
-5. Click **Register**
+   - **Supported account types:** Select **Any Entra ID Tenant + Personal Microsoft accounts**
+   - **Redirect URI:** Select **Single-page Application (SPA)** and copy and paste the url shown in the BlinkDisk Setup screen 
+6. Click **Register**
 
-### 2. Add the Redirect URI
+### 2. Add API Permissions
 
-After registration, you need to add the redirect URI for your browser. This URI is displayed in the AuthFill extension setup page, but here are the formats:
-
-- **Chrome/Edge/Opera:** `https://<extension-id>.chromiumapp.org/`
-- **Firefox:** Shown in the extension setup page (uses `browser.identity.getRedirectURL()`)
-
-To add it:
-
-1. In your app registration, go to **Authentication** in the left sidebar
-2. Click **Add a platform**
-3. Select **Single-page application (SPA)**
-4. Paste your redirect URI (shown in the AuthFill extension when you connect a Microsoft account)
-5. Click **Configure**
-
-### 3. Add API Permissions
-
-1. In your app registration, go to **API permissions** in the left sidebar
+1. In your app registration, go to **Manage > API permissions** in the left sidebar
 2. Click **Add a permission**
 3. Select **Microsoft Graph**
 4. Select **Delegated permissions**
@@ -45,13 +31,13 @@ To add it:
 
 You do **not** need to grant admin consent for personal accounts. The permission will be consented to during the OAuth login flow.
 
-### 4. Copy Your Client ID
+### 3. Copy Your Client ID
 
 1. Go to the **Overview** page of your app registration
 2. Copy the **Application (client) ID** — this is a UUID like `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`
 3. You'll paste this into the AuthFill extension
 
-### 5. Connect in AuthFill
+### 4. Connect in AuthFill
 
 1. Open the AuthFill extension
 2. Click to add a new account and enter your Microsoft email address
