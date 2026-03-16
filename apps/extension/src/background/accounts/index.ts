@@ -1,9 +1,12 @@
 import { CustomAccount } from "@extension/background/accounts/providers/custom";
+import { MicrosoftAccount } from "@extension/background/accounts/providers/microsoft";
 import { getStorage, setStorage } from "@extension/utils/storage";
 
-let accounts: CustomAccount[] = [];
+type Account = CustomAccount | MicrosoftAccount;
 
-export async function addAccount(account: CustomAccount) {
+let accounts: Account[] = [];
+
+export async function addAccount(account: Account) {
   accounts = await readAccounts();
 
   accounts.push(account);
@@ -29,6 +32,8 @@ export async function readAccounts() {
 
     if (index !== -1) {
       accounts[index].config = config;
+    } else if (config.type === "microsoft") {
+      accounts.push(new MicrosoftAccount(config));
     } else {
       accounts.push(new CustomAccount(config));
     }
@@ -43,6 +48,17 @@ export async function listAccounts() {
   return {
     accounts: accounts.map((account) => {
       const config = account.toConfig();
+
+      if (config.type === "microsoft") {
+        return {
+          ...config,
+          credentials: {
+            ...config.credentials,
+            accessToken: undefined,
+            refreshToken: undefined,
+          },
+        };
+      }
 
       return {
         ...config,

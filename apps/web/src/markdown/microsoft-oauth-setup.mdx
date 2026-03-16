@@ -1,0 +1,91 @@
+# Setting Up Microsoft OAuth for AuthFill
+
+**Last updated:** March 16, 2026
+
+AuthFill supports Microsoft Outlook, Hotmail, and Live email accounts through OAuth2 authentication via Microsoft Graph API. Since Microsoft has deprecated app passwords for many accounts, you'll need to register your own Azure AD application to connect your Microsoft email.
+
+This guide walks you through the entire setup process.
+
+---
+
+### 1. Create an Azure AD App Registration
+
+1. Go to the [Azure Portal - App Registrations](https://portal.azure.com/#view/Microsoft_AAD_RegisteredApps/ApplicationsListBlade)
+2. Sign in with your Microsoft account
+3. Click **New registration**
+4. Fill in the details:
+   - **Name:** `AuthFill` (or any name you prefer)
+   - **Supported account types:** Select **Accounts in any organizational directory and personal Microsoft accounts**
+   - **Redirect URI:** Leave blank for now (we'll add it next)
+5. Click **Register**
+
+### 2. Add the Redirect URI
+
+After registration, you need to add the redirect URI for your browser. This URI is displayed in the AuthFill extension setup page, but here are the formats:
+
+- **Chrome/Edge/Opera:** `https://<extension-id>.chromiumapp.org/`
+- **Firefox:** Shown in the extension setup page (uses `browser.identity.getRedirectURL()`)
+
+To add it:
+
+1. In your app registration, go to **Authentication** in the left sidebar
+2. Click **Add a platform**
+3. Select **Single-page application (SPA)**
+4. Paste your redirect URI (shown in the AuthFill extension when you connect a Microsoft account)
+5. Click **Configure**
+
+### 3. Add API Permissions
+
+1. In your app registration, go to **API permissions** in the left sidebar
+2. Click **Add a permission**
+3. Select **Microsoft Graph**
+4. Select **Delegated permissions**
+5. Search for and select **Mail.Read**
+6. Click **Add permissions**
+
+You do **not** need to grant admin consent for personal accounts. The permission will be consented to during the OAuth login flow.
+
+### 4. Copy Your Client ID
+
+1. Go to the **Overview** page of your app registration
+2. Copy the **Application (client) ID** — this is a UUID like `xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx`
+3. You'll paste this into the AuthFill extension
+
+### 5. Connect in AuthFill
+
+1. Open the AuthFill extension
+2. Click to add a new account and enter your Microsoft email address
+3. AuthFill will detect it's a Microsoft account and show the OAuth setup page
+4. Paste your **Application (Client) ID**
+5. Click **Connect with Microsoft**
+6. A Microsoft login popup will appear — sign in and grant the requested permissions
+7. Once authorized, AuthFill will start fetching your emails automatically
+
+---
+
+### Troubleshooting
+
+**"Token works but cannot access mailbox"**
+- Make sure you added the **Mail.Read** permission under Microsoft Graph (not another API)
+- If using a work/school account, your admin may need to grant consent
+
+**OAuth popup doesn't appear or closes immediately**
+- Verify the redirect URI in your Azure app matches exactly what's shown in the extension
+- Make sure you selected **Single-page application (SPA)** as the platform type, not **Web**
+
+**"OAuth flow was cancelled or failed"**
+- Try again — sometimes the popup fails to open on the first attempt
+- Check that the `identity` permission is granted to the extension
+
+**Emails stop appearing after some time**
+- Access tokens expire after ~1 hour and are automatically refreshed
+- If the refresh token expires (after 90 days of inactivity), you'll need to reconnect your account
+
+---
+
+### Security Notes
+
+- Your Client ID is **not a secret** — it's safe to use in a browser extension
+- AuthFill stores your OAuth tokens locally in your browser's extension storage
+- Tokens are never sent to AuthFill's servers — all communication goes directly to Microsoft's APIs
+- You can revoke access at any time from [your Microsoft account security page](https://account.microsoft.com/privacy/app-access)

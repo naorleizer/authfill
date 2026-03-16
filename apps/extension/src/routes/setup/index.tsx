@@ -26,7 +26,26 @@ function RouteComponent() {
     onSubmit: async ({ value }) => {
       const host = value.email.split("@")[1];
 
+      const microsoftDomains = [
+        "outlook.com",
+        "hotmail.com",
+        "live.com",
+        "msn.com",
+      ];
+
       const imapConfig = await loadImapConfig(host);
+
+      const isMicrosoft =
+        microsoftDomains.includes(host) ||
+        imapConfig?.host === "outlook.office365.com";
+
+      if (isMicrosoft) {
+        navigate({
+          to: "/setup/microsoft",
+          search: { email: value.email },
+        });
+        return;
+      }
 
       navigate({
         to: "/setup/custom",

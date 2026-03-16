@@ -1,5 +1,6 @@
 import { deleteAccount, listAccounts } from "@extension/background/accounts";
 import { authenticateCustom } from "@extension/background/auth/custom";
+import { authenticateMicrosoft } from "@extension/background/auth/microsoft";
 import { startDemo } from "@extension/background/utils/demo";
 import { getEmail } from "@extension/background/utils/email";
 import { showNotification } from "@extension/background/utils/notification";
@@ -16,6 +17,8 @@ browser.runtime.onMessage.addListener(async (payload: any) => {
   switch (payload.event) {
     case "auth.custom":
       return await authenticateCustom(payload.data);
+    case "auth.microsoft":
+      return await authenticateMicrosoft(payload.data);
     case "notification.show":
       return await showNotification(payload.data);
     case "accounts.list":

@@ -17,7 +17,18 @@ export interface CustomAccountConfig extends BaseAccountConfig {
   };
 }
 
-export type AccountConfig = CustomAccountConfig;
+export interface MicrosoftAccountConfig extends BaseAccountConfig {
+  type: "microsoft";
+  credentials: {
+    type: "OAUTH2";
+    clientId: string;
+    accessToken: string;
+    refreshToken: string;
+    tokenExpiry: number;
+  };
+}
+
+export type AccountConfig = CustomAccountConfig | MicrosoftAccountConfig;
 
 export interface ProxySettings {
   enabled: boolean;
