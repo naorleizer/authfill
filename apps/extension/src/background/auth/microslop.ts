@@ -1,17 +1,16 @@
 import { addAccount, listAccounts } from "@extension/background/accounts";
-import { MicrosoftAccount } from "@extension/background/accounts/providers/microsoft";
+import { MicroslopAccount } from "@extension/background/accounts/providers/microslop";
 import { id } from "@extension/utils/id";
 import {
   getStorage,
   setStorage,
-  type MicrosoftAccountConfig,
+  type MicroslopAccountConfig,
 } from "@extension/utils/storage";
 import browser from "webextension-polyfill";
 
 const AUTHORIZE_URL =
   "https://login.microsoftonline.com/common/oauth2/v2.0/authorize";
-const TOKEN_URL =
-  "https://login.microsoftonline.com/common/oauth2/v2.0/token";
+const TOKEN_URL = "https://login.microsoftonline.com/common/oauth2/v2.0/token";
 const SCOPES = "Mail.Read offline_access openid email";
 
 function getRedirectUri(): string {
@@ -41,10 +40,10 @@ async function generatePKCE() {
 /**
  * Called from the popup via message passing. Kicks off the OAuth flow
  * in the background and returns immediately. The popup watches
- * `browser.storage.onChanged` for `microsoftAuthResult` to learn the outcome,
+ * `browser.storage.onChanged` for `microslopAuthResult` to learn the outcome,
  * because Chrome closes the popup when launchWebAuthFlow opens.
  */
-export async function authenticateMicrosoft(data: {
+export async function authenticateMicroslop(data: {
   email: string;
   clientId: string;
 }) {
@@ -54,15 +53,16 @@ export async function authenticateMicrosoft(data: {
   }
 
   // Clear any previous result
-  await browser.storage.local.remove("microsoftAuthResult");
+  await browser.storage.local.remove("microslopAuthResult");
 
   // Fire-and-forget — the popup will close when the OAuth window opens
   _runOAuthFlow(data).catch((err) => {
-    console.error("[auth.microsoft] Unhandled error:", err);
+    console.error("[auth.microslop] Unhandled error:", err);
     browser.storage.local.set({
-      microsoftAuthResult: {
+      microslopAuthResult: {
         success: false,
-        error: err instanceof Error ? err.message : "An unexpected error occurred.",
+        error:
+          err instanceof Error ? err.message : "An unexpected error occurred.",
       },
     });
   });
@@ -95,7 +95,7 @@ async function _runOAuthFlow(data: { email: string; clientId: string }) {
     });
   } catch {
     await browser.storage.local.set({
-      microsoftAuthResult: {
+      microslopAuthResult: {
         success: false,
         error: "OAuth flow was cancelled or failed.",
       },
@@ -109,7 +109,7 @@ async function _runOAuthFlow(data: { email: string; clientId: string }) {
 
   if (error || !code) {
     await browser.storage.local.set({
-      microsoftAuthResult: {
+      microslopAuthResult: {
         success: false,
         error:
           responseParams.get("error_description") ||
@@ -140,11 +140,10 @@ async function _runOAuthFlow(data: { email: string; clientId: string }) {
     if (!tokenRes.ok) {
       const err = await tokenRes.json().catch(() => ({}));
       await browser.storage.local.set({
-        microsoftAuthResult: {
+        microslopAuthResult: {
           success: false,
           error:
-            err.error_description ||
-            "Failed to exchange authorization code.",
+            err.error_description || "Failed to exchange authorization code.",
         },
       });
       return;
@@ -153,7 +152,7 @@ async function _runOAuthFlow(data: { email: string; clientId: string }) {
     tokens = await tokenRes.json();
   } catch {
     await browser.storage.local.set({
-      microsoftAuthResult: {
+      microslopAuthResult: {
         success: false,
         error: "Failed to exchange authorization code.",
       },
@@ -169,7 +168,7 @@ async function _runOAuthFlow(data: { email: string; clientId: string }) {
     );
     if (!testRes.ok) {
       await browser.storage.local.set({
-        microsoftAuthResult: {
+        microslopAuthResult: {
           success: false,
           error:
             "Token works but cannot access mailbox. Check Mail.Read permission.",
@@ -179,7 +178,7 @@ async function _runOAuthFlow(data: { email: string; clientId: string }) {
     }
   } catch {
     await browser.storage.local.set({
-      microsoftAuthResult: {
+      microslopAuthResult: {
         success: false,
         error: "Failed to verify mailbox access.",
       },
@@ -187,9 +186,9 @@ async function _runOAuthFlow(data: { email: string; clientId: string }) {
     return;
   }
 
-  const config: MicrosoftAccountConfig = {
+  const config: MicroslopAccountConfig = {
     id: id("acc"),
-    type: "microsoft",
+    type: "microslop",
     email: data.email,
     credentials: {
       type: "OAUTH2",
@@ -200,20 +199,20 @@ async function _runOAuthFlow(data: { email: string; clientId: string }) {
     },
   };
 
-  await addAccount(new MicrosoftAccount(config));
+  await addAccount(new MicroslopAccount(config));
 
   const updatedAccounts = await listAccounts();
   await browser.storage.local.set({
-    microsoftAuthResult: {
+    microslopAuthResult: {
       success: true,
       count: updatedAccounts.accounts.length,
     },
   });
 }
 
-export async function refreshMicrosoftToken(
-  config: MicrosoftAccountConfig,
-): Promise<MicrosoftAccountConfig> {
+export async function refreshMicroslopToken(
+  config: MicroslopAccountConfig,
+): Promise<MicroslopAccountConfig> {
   const res = await fetch(TOKEN_URL, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
@@ -251,12 +250,12 @@ export async function refreshMicrosoftToken(
   return config;
 }
 
-export async function getMicrosoftAccessToken(
-  config: MicrosoftAccountConfig,
+export async function getMicroslopAccessToken(
+  config: MicroslopAccountConfig,
 ): Promise<string> {
   if (config.credentials.tokenExpiry > Date.now() + 60_000) {
     return config.credentials.accessToken;
   }
-  const updated = await refreshMicrosoftToken(config);
+  const updated = await refreshMicroslopToken(config);
   return updated.credentials.accessToken;
 }

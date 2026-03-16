@@ -20,7 +20,7 @@ import { Route as SetupIndexRouteImport } from './routes/setup/index'
 import { Route as SettingsIndexRouteImport } from './routes/settings/index'
 import { Route as AccountsIndexRouteImport } from './routes/accounts/index'
 import { Route as TutorialCompleteRouteImport } from './routes/tutorial/complete'
-import { Route as SetupMicrosoftRouteImport } from './routes/setup/microsoft'
+import { Route as SetupMicroslopRouteImport } from './routes/setup/microslop'
 import { Route as SetupCustomRouteImport } from './routes/setup/custom'
 import { Route as SetupCompleteRouteImport } from './routes/setup/complete'
 import { Route as EmailsIdRouteImport } from './routes/emails/$id'
@@ -80,9 +80,9 @@ const TutorialCompleteRoute = TutorialCompleteRouteImport.update({
   path: '/complete',
   getParentRoute: () => TutorialRouteRoute,
 } as any)
-const SetupMicrosoftRoute = SetupMicrosoftRouteImport.update({
-  id: '/microsoft',
-  path: '/microsoft',
+const SetupMicroslopRoute = SetupMicroslopRouteImport.update({
+  id: '/microslop',
+  path: '/microslop',
   getParentRoute: () => SetupRouteRoute,
 } as any)
 const SetupCustomRoute = SetupCustomRouteImport.update({
@@ -111,7 +111,7 @@ export interface FileRoutesByFullPath {
   '/emails/$id': typeof EmailsIdRoute
   '/setup/complete': typeof SetupCompleteRoute
   '/setup/custom': typeof SetupCustomRoute
-  '/setup/microsoft': typeof SetupMicrosoftRoute
+  '/setup/microslop': typeof SetupMicroslopRoute
   '/tutorial/complete': typeof TutorialCompleteRoute
   '/accounts/': typeof AccountsIndexRoute
   '/settings/': typeof SettingsIndexRoute
@@ -124,7 +124,7 @@ export interface FileRoutesByTo {
   '/emails/$id': typeof EmailsIdRoute
   '/setup/complete': typeof SetupCompleteRoute
   '/setup/custom': typeof SetupCustomRoute
-  '/setup/microsoft': typeof SetupMicrosoftRoute
+  '/setup/microslop': typeof SetupMicroslopRoute
   '/tutorial/complete': typeof TutorialCompleteRoute
   '/accounts': typeof AccountsIndexRoute
   '/settings': typeof SettingsIndexRoute
@@ -142,7 +142,7 @@ export interface FileRoutesById {
   '/emails/$id': typeof EmailsIdRoute
   '/setup/complete': typeof SetupCompleteRoute
   '/setup/custom': typeof SetupCustomRoute
-  '/setup/microsoft': typeof SetupMicrosoftRoute
+  '/setup/microslop': typeof SetupMicroslopRoute
   '/tutorial/complete': typeof TutorialCompleteRoute
   '/accounts/': typeof AccountsIndexRoute
   '/settings/': typeof SettingsIndexRoute
@@ -161,7 +161,7 @@ export interface FileRouteTypes {
     | '/emails/$id'
     | '/setup/complete'
     | '/setup/custom'
-    | '/setup/microsoft'
+    | '/setup/microslop'
     | '/tutorial/complete'
     | '/accounts/'
     | '/settings/'
@@ -174,7 +174,7 @@ export interface FileRouteTypes {
     | '/emails/$id'
     | '/setup/complete'
     | '/setup/custom'
-    | '/setup/microsoft'
+    | '/setup/microslop'
     | '/tutorial/complete'
     | '/accounts'
     | '/settings'
@@ -191,7 +191,7 @@ export interface FileRouteTypes {
     | '/emails/$id'
     | '/setup/complete'
     | '/setup/custom'
-    | '/setup/microsoft'
+    | '/setup/microslop'
     | '/tutorial/complete'
     | '/accounts/'
     | '/settings/'
@@ -287,11 +287,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof TutorialCompleteRouteImport
       parentRoute: typeof TutorialRouteRoute
     }
-    '/setup/microsoft': {
-      id: '/setup/microsoft'
-      path: '/microsoft'
-      fullPath: '/setup/microsoft'
-      preLoaderRoute: typeof SetupMicrosoftRouteImport
+    '/setup/microslop': {
+      id: '/setup/microslop'
+      path: '/microslop'
+      fullPath: '/setup/microslop'
+      preLoaderRoute: typeof SetupMicroslopRouteImport
       parentRoute: typeof SetupRouteRoute
     }
     '/setup/custom': {
@@ -357,14 +357,14 @@ const SettingsRouteRouteWithChildren = SettingsRouteRoute._addFileChildren(
 interface SetupRouteRouteChildren {
   SetupCompleteRoute: typeof SetupCompleteRoute
   SetupCustomRoute: typeof SetupCustomRoute
-  SetupMicrosoftRoute: typeof SetupMicrosoftRoute
+  SetupMicroslopRoute: typeof SetupMicroslopRoute
   SetupIndexRoute: typeof SetupIndexRoute
 }
 
 const SetupRouteRouteChildren: SetupRouteRouteChildren = {
   SetupCompleteRoute: SetupCompleteRoute,
   SetupCustomRoute: SetupCustomRoute,
-  SetupMicrosoftRoute: SetupMicrosoftRoute,
+  SetupMicroslopRoute: SetupMicroslopRoute,
   SetupIndexRoute: SetupIndexRoute,
 }
 

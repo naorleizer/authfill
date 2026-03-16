@@ -1,8 +1,8 @@
-import { getMicrosoftAccessToken } from "@extension/background/auth/microsoft";
 import { deleteAccount, syncAccounts } from "@extension/background/accounts";
+import { getMicroslopAccessToken } from "@extension/background/auth/microslop";
 import { addEmails } from "@extension/background/utils/email";
 import type { EmailBase } from "@extension/types/email";
-import type { MicrosoftAccountConfig } from "@extension/utils/storage";
+import type { MicroslopAccountConfig } from "@extension/utils/storage";
 
 const POLL_INTERVAL = 5_000;
 const MESSAGES_URL = "https://graph.microsoft.com/v1.0/me/messages";
@@ -15,12 +15,12 @@ interface GraphMessage {
   receivedDateTime: string;
 }
 
-export class MicrosoftAccount {
-  config: MicrosoftAccountConfig;
+export class MicroslopAccount {
+  config: MicroslopAccountConfig;
   private pollTimer: ReturnType<typeof setInterval> | null = null;
   private lastCheck: string | null = null;
 
-  constructor(config: MicrosoftAccountConfig) {
+  constructor(config: MicroslopAccountConfig) {
     this.config = config;
   }
 
@@ -35,19 +35,22 @@ export class MicrosoftAccount {
       clearInterval(this.pollTimer);
       this.pollTimer = null;
     }
-    console.info(`[${this.config.id}] Microsoft account disconnected`);
+    console.info(`[${this.config.id}] Microslop account disconnected`);
   }
 
-  public toConfig(): MicrosoftAccountConfig {
+  public toConfig(): MicroslopAccountConfig {
     return this.config;
   }
 
   private async fetchEmails() {
     let accessToken: string;
     try {
-      accessToken = await getMicrosoftAccessToken(this.config);
+      accessToken = await getMicroslopAccessToken(this.config);
     } catch (err) {
-      console.error(`[${this.config.id}] Token refresh failed, removing account:`, err);
+      console.error(
+        `[${this.config.id}] Token refresh failed, removing account:`,
+        err,
+      );
       this.disconnect();
       await deleteAccount({ accountId: this.config.id });
       return;
@@ -60,10 +63,7 @@ export class MicrosoftAccount {
     });
 
     if (this.lastCheck) {
-      params.set(
-        "$filter",
-        `receivedDateTime gt ${this.lastCheck}`,
-      );
+      params.set("$filter", `receivedDateTime gt ${this.lastCheck}`);
     }
 
     try {

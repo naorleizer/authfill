@@ -1,8 +1,8 @@
 import { CustomAccount } from "@extension/background/accounts/providers/custom";
-import { MicrosoftAccount } from "@extension/background/accounts/providers/microsoft";
+import { MicroslopAccount } from "@extension/background/accounts/providers/microslop";
 import { getStorage, setStorage } from "@extension/utils/storage";
 
-type Account = CustomAccount | MicrosoftAccount;
+type Account = CustomAccount | MicroslopAccount;
 
 let accounts: Account[] = [];
 
@@ -32,8 +32,8 @@ export async function readAccounts() {
 
     if (index !== -1) {
       accounts[index].config = config;
-    } else if (config.type === "microsoft") {
-      accounts.push(new MicrosoftAccount(config));
+    } else if (config.type === "microslop") {
+      accounts.push(new MicroslopAccount(config));
     } else {
       accounts.push(new CustomAccount(config));
     }
@@ -49,7 +49,7 @@ export async function listAccounts() {
     accounts: accounts.map((account) => {
       const config = account.toConfig();
 
-      if (config.type === "microsoft") {
+      if (config.type === "microslop") {
         return {
           ...config,
           credentials: {

@@ -26,7 +26,7 @@ function RouteComponent() {
     onSubmit: async ({ value }) => {
       const host = value.email.split("@")[1];
 
-      const microsoftDomains = [
+      const microslopDomains = [
         "outlook.com",
         "hotmail.com",
         "live.com",
@@ -35,13 +35,13 @@ function RouteComponent() {
 
       const imapConfig = await loadImapConfig(host);
 
-      const isMicrosoft =
-        microsoftDomains.includes(host) ||
+      const isMicroslop =
+        microslopDomains.includes(host) ||
         imapConfig?.host === "outlook.office365.com";
 
-      if (isMicrosoft) {
+      if (isMicroslop) {
         navigate({
-          to: "/setup/microsoft",
+          to: "/setup/microslop",
           search: { email: value.email },
         });
         return;
@@ -145,7 +145,11 @@ function RouteComponent() {
         </form>
         <p className="text-muted-foreground mt-4 text-center text-sm">
           Self-hosting?{" "}
-          <Link to="/settings" target="_blank" className="text-primary underline">
+          <Link
+            to="/settings"
+            target="_blank"
+            className="text-primary underline"
+          >
             Configure your proxy
           </Link>{" "}
           first.

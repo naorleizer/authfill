@@ -6,10 +6,10 @@ import { Alert, AlertDescription, AlertTitle } from "@ui/alert";
 import { InfoIcon } from "lucide-react";
 import { useEffect, useMemo } from "react";
 import { toast } from "sonner";
-import { z } from "zod";
 import browser from "webextension-polyfill";
+import { z } from "zod";
 
-export const Route = createFileRoute("/setup/microsoft")({
+export const Route = createFileRoute("/setup/microslop")({
   component: RouteComponent,
   validateSearch: (search: Record<string, unknown>) => {
     return {
@@ -38,8 +38,8 @@ function RouteComponent() {
   // this effect picks up the result.
   useEffect(() => {
     // Check if there's already a result (popup was closed and reopened)
-    browser.storage.local.get("microsoftAuthResult").then((data) => {
-      const result = data.microsoftAuthResult as
+    browser.storage.local.get("microslopAuthResult").then((data) => {
+      const result = data.microslopAuthResult as
         | { success: boolean; error?: string; count?: number }
         | undefined;
       if (result) handleAuthResult(result);
@@ -48,7 +48,7 @@ function RouteComponent() {
     const listener = (
       changes: Record<string, browser.Storage.StorageChange>,
     ) => {
-      const result = changes.microsoftAuthResult?.newValue as
+      const result = changes.microslopAuthResult?.newValue as
         | { success: boolean; error?: string; count?: number }
         | undefined;
       if (result) handleAuthResult(result);
@@ -63,7 +63,7 @@ function RouteComponent() {
     error?: string;
     count?: number;
   }) {
-    browser.storage.local.remove("microsoftAuthResult");
+    browser.storage.local.remove("microslopAuthResult");
 
     if (result.success) {
       toast.success("Successfully connected your Microsoft account!");
@@ -86,7 +86,7 @@ function RouteComponent() {
       }),
     },
     onSubmit: async ({ value }) => {
-      const res = await sendToBackground("auth.microsoft", value);
+      const res = await sendToBackground("auth.microslop", value);
 
       if (!res.started) {
         toast.error(res.error ?? "Something went wrong! Please try again.");
