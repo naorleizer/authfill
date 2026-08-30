@@ -1,0 +1,13 @@
+.git
+node_modules
+**/node_modules
+**/dist
+**/.turbo
+**/.wrangler
+apps/extension
+apps/web
+banner.jpg
+*.log
+.env
+.dev.vars
+.DS_Store
